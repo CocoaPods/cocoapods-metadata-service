@@ -1,7 +1,9 @@
 import * as express from "express"
 import fetch from "node-fetch"
-import { PodspecJSON } from "./podspec/types"
+import { createGHAPI } from "./podspec/api"
 import { getGitHubMetadata } from "./podspec/getGitHubMetadata"
+import { PodspecJSON } from "./podspec/types"
+import { uploadREADME } from "./podspec/uploadREADME"
 
 export interface TrunkWebhook {
   type: string
@@ -32,4 +34,7 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
     console.error(`[${webhookJSON.pod} - ${webhookJSON.version}] is not a GitHub project, skipping.`)
     return
   }
+
+  const api = createGHAPI()
+  uploadREADME(podspecJSON, api, ghDetails)
 }

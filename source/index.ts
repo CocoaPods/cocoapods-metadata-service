@@ -1,4 +1,8 @@
+import { validateENV } from "./globals"
 import { createApp } from "./server"
+
+// Ensure we have everything needed to run the server
+validateENV()
 
 const app = createApp()
 app.listen(app.get("port"), () => {
