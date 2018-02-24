@@ -1,5 +1,12 @@
 A web service that handles generating the READMEs / CHANGELOGs for a Pod.
 
+## Role
+
+This service will receive a webhook from CocoaPods trunk on a new Podspec version.
+It will take the new Podspec, and generate metadata for the CocoaPods website. Meaning we can rely less on the hosted Mac which powers the CocoaPods QIs. Increasing platform stability.
+
+Downside: This will only work for Open Source projects on GitHub.
+
 ## Contributing
 
 You will need Node and Yarn installed.
