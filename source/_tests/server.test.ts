@@ -1,8 +1,15 @@
-import { app } from "../server"
-import { trunkWebhook } from "../webhook"
+const mockPost = jest.fn()
+const mockUse = jest.fn()
+jest.mock("express", () => () => ({ set: jest.fn(), post: mockPost, use: mockUse }))
 
-it.skip("sets up the trunk webhook to run on/webhook", () => {
-  const testApp = app
+import { createApp } from "../server"
 
-  expect(app.routes).toEqual({})
+it("it sets up the json body parser", () => {
+  createApp()
+  expect(mockUse).toBeCalled()
+})
+
+it("sets up the trunk webhook to run on/webhook", () => {
+  createApp()
+  expect(mockPost).toBeCalledWith("/webhook", expect.anything())
 })

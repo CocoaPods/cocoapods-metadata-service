@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "rootDirs": ["source"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "lib": ["es2016", "es2016.array.include"]
   }
 }
