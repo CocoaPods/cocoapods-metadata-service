@@ -1,7 +1,8 @@
 import * as Octokit from "@octokit/rest"
+import { GITHUB_ACCESS_TOKEN } from "../globals"
 
 export const createGHAPI = () => {
   const api = new Octokit()
-  api.authenticate({ token: "e622517d9f1136ea890007c6373666312cdfaa69", type: "token" })
+  api.authenticate({ token: GITHUB_ACCESS_TOKEN, type: "token" })
   return api
 }

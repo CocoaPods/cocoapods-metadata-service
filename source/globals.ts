@@ -31,7 +31,23 @@ export const AWS_SECRET_ACCESS_KEY = getEnv("AWS_SECRET_ACCESS_KEY")
 /** The S3 bucket for uploading READMES */
 export const AWS_BUCKET = getEnv("AWS_BUCKET")
 
+/** GitHub API Key */
+export const GITHUB_ACCESS_TOKEN = getEnv("GITHUB_ACCESS_TOKEN")
+
+/** Trunk specifies a secret webhook URL we need to respond on */
+export const TRUNK_WEBHOOK_SECRET = getEnv("TRUNK_WEBHOOK_SECRET")
+
+/** The postgres URL for the trunk db */
+export const TRUNK_DATABASE_URL = getEnv("TRUNK_DATABASE_URL")
+
 export const validateENV = () => {
   // Can't run without these
-  validates(["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_BUCKET"])
+  validates([
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_BUCKET",
+    "GITHUB_ACCESS_TOKEN",
+    "TRUNK_DATABASE_URL",
+    "TRUNK_WEBHOOK_SECRET"
+  ])
 }
