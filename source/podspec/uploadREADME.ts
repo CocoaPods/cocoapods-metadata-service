@@ -27,7 +27,8 @@ export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubD
   const s3 = new AWS.S3()
   const filePath = `docsets/${pod.name}/${pod.version}/README.html`
   try {
-    return await s3.upload({ Body: README, Bucket: AWS_BUCKET, Key: filePath }).promise()
+    await s3.upload({ Body: README, Bucket: AWS_BUCKET, Key: filePath }).promise()
+    return `http://${AWS_BUCKET}.s3.amazonaws.com/${filePath}`
   } catch (error) {
     // tslint:disable-next-line:no-console
     console.error("Got an error uploading to s3", error)
