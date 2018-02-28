@@ -11,5 +11,5 @@ it("it sets up the json body parser", () => {
 
 it("sets up the trunk webhook to run on/webhook", () => {
   createApp()
-  expect(mockPost).toBeCalledWith("/webhook/trunk_secret", expect.anything())
+  expect(mockPost).toBeCalledWith(expect.stringMatching("webhook/"), expect.anything())
 })

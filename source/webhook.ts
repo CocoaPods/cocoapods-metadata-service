@@ -1,6 +1,7 @@
 import * as express from "express"
 import fetch from "node-fetch"
 import { createGHAPI } from "./podspec/api"
+import { grabCommunityProfile } from "./podspec/getCommunityProfile"
 import { getGitHubMetadata } from "./podspec/getGitHubMetadata"
 import { PodspecJSON } from "./podspec/types"
 import { uploadCHANGELOG, uploadREADME } from "./podspec/uploadTextContent"
@@ -43,11 +44,14 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
   const api = createGHAPI()
   const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
   const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
+  const communityProfile = await grabCommunityProfile(podspecJSON, api, ghDetails)
 
   if (newREADMEURL) {
     const row: CocoaDocsRow = {
       name: webhookJSON.pod,
-      rendered_readme_url: newREADMEURL
+      rendered_readme_url: newREADMEURL,
+      license_canonical_url: communityProfile.files.license.url,
+      license_short_name: communityProfile.files.license.spdx_id
     }
 
     if (newCHANGELOG) {

@@ -36,14 +36,26 @@ export const updateCocoaDocsRowForPod = async (row: CocoaDocsRow) => {
   const existingRow = await trunk.query(existsQuery, existsValues)
   if (existingRow.rowCount) {
     // Update if it exists
-    const insertQuery = `UPDATE cocoadocs_pod_metrics SET "rendered_readme_url"=$1, "rendered_changelog_url"=$2 WHERE "id"=$3`
-    const insertValues = [row.rendered_readme_url, row.rendered_changelog_url, existingRow.rows[0].id]
+    const insertQuery = `UPDATE cocoadocs_pod_metrics SET "rendered_readme_url"=$1, "rendered_changelog_url"=$2, "license_short_name"=$3, "license_canonical_url"=$4 WHERE "id"=$5`
+    const insertValues = [
+      row.rendered_readme_url,
+      row.rendered_changelog_url,
+      row.license_short_name,
+      row.license_canonical_url,
+      existingRow.rows[0].id
+    ]
     await trunk.query(insertQuery, insertValues)
   } else {
     // Create if it doesnt exist
     const insertQuery =
-      "INSERT INTO cocoadocs_pod_metrics(pod_id, rendered_readme_url, rendered_changelog_url) VALUES($1::int, $2::text, $3::text)"
-    const insertValues = [podID, row.rendered_readme_url, row.rendered_changelog_url]
+      "INSERT INTO cocoadocs_pod_metrics(pod_id, rendered_readme_url, rendered_changelog_url, license_short_name, license_canonical_url) VALUES($1::int, $2::text, $3::text, $4::text, $5::text)"
+    const insertValues = [
+      podID,
+      row.rendered_readme_url,
+      row.rendered_changelog_url,
+      row.license_short_name,
+      row.license_canonical_url
+    ]
     await trunk.query(insertQuery, insertValues)
   }
 }
