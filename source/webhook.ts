@@ -59,5 +59,7 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
     }
 
     await updateCocoaDocsRowForPod(row)
+    // tslint:disable-next-line:no-console
+    console.log(`Updated ${podspecJSON.name} - ${podspecJSON.version}`)
   }
 }
