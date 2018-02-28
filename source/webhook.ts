@@ -3,7 +3,7 @@ import fetch from "node-fetch"
 import { createGHAPI } from "./podspec/api"
 import { getGitHubMetadata } from "./podspec/getGitHubMetadata"
 import { PodspecJSON } from "./podspec/types"
-import { uploadREADME } from "./podspec/uploadREADME"
+import { uploadCHANGELOG, uploadREADME } from "./podspec/uploadTextContent"
 import { CocoaDocsRow, updateCocoaDocsRowForPod } from "./trunk/db"
 
 export interface TrunkWebhook {
@@ -42,11 +42,16 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
   const api = createGHAPI()
   const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
+  const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
 
   if (newREADMEURL) {
     const row: CocoaDocsRow = {
       name: webhookJSON.pod,
       rendered_readme_url: newREADMEURL
+    }
+
+    if (newCHANGELOG) {
+      row.rendered_changelog_url = newCHANGELOG
     }
 
     await updateCocoaDocsRowForPod(row)
