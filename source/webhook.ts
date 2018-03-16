@@ -53,8 +53,8 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
     const row: CocoaDocsRow = {
       name: webhookJSON.pod,
       rendered_readme_url: newREADMEURL,
-      license_canonical_url: communityProfile.files.license.url,
-      license_short_name: communityProfile.files.license.spdx_id
+      license_canonical_url: (communityProfile.files.license && communityProfile.files.license.url) || ghDetails.href,
+      license_short_name: (communityProfile.files.license && communityProfile.files.license.spdx_id) || "Unknown"
     }
 
     if (newCHANGELOG) {
