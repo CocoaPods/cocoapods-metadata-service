@@ -25,15 +25,18 @@ export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHub
     accept: "application/vnd.github.VERSION.html"
   }
 
-  const READMEResponse = await api.repos.getContent({
-    ref: pod.version,
-    repo: repo.name,
-    owner: repo.owner,
-    path: "CHANGELOG.md",
-    headers
-  } as any)
-
-  return READMEResponse.data
+  try {
+    const READMEResponse = await api.repos.getContent({
+      ref: pod.version,
+      repo: repo.name,
+      owner: repo.owner,
+      path: "CHANGELOG.md",
+      headers
+    } as any)
+    return READMEResponse.data
+  } catch (error) {
+    return undefined
+  }
 }
 
 export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec) => {

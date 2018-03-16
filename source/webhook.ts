@@ -28,7 +28,7 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
   const specsRepoSuffix = "https://raw.githubusercontent.com/CocoaPods/Specs"
   if (!webhookJSON.data_url.startsWith(specsRepoSuffix)) {
     // tslint:disable-next-line:no-console
-    console.error(`Webhook (${webhookJSON.data_url}) did not start with $%{specsRepoSuffix}.`)
+    console.error(`Webhook (${webhookJSON.data_url}) did not start with ${specsRepoSuffix}.`)
     return res.status(401).send({ error: "data_url should be for the CocoaPods specs repo" })
   }
 
