@@ -11,7 +11,7 @@ export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDet
   }
 
   const READMEResponse = await api.repos.getReadme({
-    ref: pod.version,
+    ref: pod.source.tag,
     repo: repo.name,
     owner: repo.owner,
     headers
