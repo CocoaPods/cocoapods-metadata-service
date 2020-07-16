@@ -2,9 +2,10 @@ import { readFileSync } from "fs"
 import { join } from "path"
 import { grabCHANGELOG, grabREADME } from "../uploadTextContent"
 import fetch from "node-fetch"
+const mockFetch = fetch as any
 
 jest.mock("../../globals", () => ({
-  AWS_BUCKET: "test_bucket"
+  AWS_BUCKET: "test_bucket",
 }))
 
 class mockAWS3 {
@@ -25,7 +26,7 @@ describe("grabbing the README", () => {
       owner: "dblock",
       name: "ARTiledImageView",
       repo: "dblock/ARTiledImageView",
-      href: "https://github.com/dblock/ARTiledImage.git"
+      href: "https://github.com/dblock/ARTiledImage.git",
     }
 
     grabREADME(podspec, api as any, repo)
@@ -34,7 +35,7 @@ describe("grabbing the README", () => {
       headers: { accept: "application/vnd.github.VERSION.html" },
       owner: "dblock",
       ref: "1.1.1",
-      repo: "ARTiledImageView"
+      repo: "ARTiledImageView",
     })
   })
 })
@@ -49,7 +50,7 @@ describe("grabbing the CHANGELOG", () => {
       owner: "dblock",
       name: "ARTiledImageView",
       repo: "dblock/ARTiledImageView",
-      href: "https://github.com/dblock/ARTiledImage.git"
+      href: "https://github.com/dblock/ARTiledImage.git",
     }
 
     grabCHANGELOG(podspec, api as any, repo)
@@ -59,7 +60,7 @@ describe("grabbing the CHANGELOG", () => {
       owner: "dblock",
       ref: "1.1.1",
       repo: "ARTiledImageView",
-      path: "CHANGELOG.md"
+      path: "CHANGELOG.md",
     })
   })
 })
@@ -73,13 +74,13 @@ describe("grabbing the README with http", () => {
       owner: "dblock",
       name: "ARTiledImageView",
       repo: "dblock/ARTiledImageView",
-      href: "https://github.com/dblock/ARTiledImage.git"
+      href: "https://github.com/dblock/ARTiledImage.git",
     }
 
-    fetch.mockClear()
-    fetch.mockResolvedValue("Best SDK ever.")
+    mockFetch.mockClear()
+    mockFetch.mockResolvedValue("Best SDK ever.")
 
-    grabREADME(podspec, api as any, repo).then(readme => {
+    grabREADME(podspec, api as any, repo).then((readme) => {
       expect(readme).toBe("Best SDK ever.")
       expect(fetch).toBeCalledWith("https://example.com/README1")
       expect(api.repos.getContent).toHaveBeenCalledTimes(0)
@@ -96,13 +97,13 @@ describe("grabbing the CHANGELOG with http", () => {
       owner: "dblock",
       name: "ARTiledImageView",
       repo: "dblock/ARTiledImageView",
-      href: "https://github.com/dblock/ARTiledImage.git"
+      href: "https://github.com/dblock/ARTiledImage.git",
     }
 
-    fetch.mockClear()
-    fetch.mockResolvedValue("Fixed everything.")
+    mockFetch.mockClear()
+    mockFetch.mockResolvedValue("Fixed everything.")
 
-    grabCHANGELOG(podspec, api as any, repo).then(changelog => {
+    grabCHANGELOG(podspec, api as any, repo).then((changelog) => {
       expect(changelog).toBe("Fixed everything.")
       expect(fetch).toBeCalledWith("https://example.com/CHANGELOG1")
       expect(api.repos.getContent).toHaveBeenCalledTimes(0)
@@ -116,9 +117,9 @@ describe("grabbing the README returns null", () => {
     const podspec = JSON.parse(readFileSync(fixtures, "utf8"))
     const api = { repos: { getContent: jest.fn() } }
 
-    fetch.mockClear()
+    mockFetch.mockClear()
 
-    grabREADME(podspec, api as any, undefined).then(readme => {
+    grabREADME(podspec, api as any, undefined).then((readme) => {
       expect(readme).toBeNull()
       expect(fetch).toHaveBeenCalledTimes(0)
       expect(api.repos.getContent).toHaveBeenCalledTimes(0)
@@ -132,9 +133,9 @@ describe("grabbing the CHANGELOG returns null", () => {
     const podspec = JSON.parse(readFileSync(fixtures, "utf8"))
     const api = { repos: { getContent: jest.fn() } }
 
-    fetch.mockClear()
+    mockFetch.mockClear()
 
-    grabCHANGELOG(podspec, api as any, undefined).then(changelog => {
+    grabCHANGELOG(podspec, api as any, undefined).then((changelog) => {
       expect(changelog).toBeNull()
       expect(fetch).toHaveBeenCalledTimes(0)
       expect(api.repos.getContent).toHaveBeenCalledTimes(0)

@@ -47,7 +47,7 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
   const api = createGHAPI()
   const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
   const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
-  const communityProfile = (ghDetails && await grabCommunityProfile(podspecJSON, api, ghDetails)) || null
+  const communityProfile = (ghDetails && (await grabCommunityProfile(podspecJSON, api, ghDetails))) || null
 
   if (newREADMEURL) {
     const row: CocoaDocsRow = {
@@ -61,7 +61,8 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
     if (communityProfile) {
       row.license_short_name = (communityProfile.files.license && communityProfile.files.license.spdx_id) || "Unknown"
-      row.license_canonical_url = (communityProfile.files.license && communityProfile.files.license.url) || ghDetails.href
+      row.license_canonical_url =
+        (communityProfile.files.license && communityProfile.files.license.url) || (ghDetails && ghDetails.href)
     }
 
     await updateCocoaDocsRowForPod(row)

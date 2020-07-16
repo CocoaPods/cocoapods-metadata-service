@@ -6,7 +6,7 @@ import { AWS_BUCKET } from "../globals"
 import { GitHubDetailsForPodspec } from "./getGitHubMetadata"
 import { PodspecJSON } from "./types"
 
-export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
+export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   if (pod.readme) {
     return await fetch(pod.readme)
   } else if (!repo) {
@@ -14,20 +14,20 @@ export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDet
   }
 
   const headers = {
-    accept: "application/vnd.github.VERSION.html"
+    accept: "application/vnd.github.VERSION.html",
   }
 
   const READMEResponse = await api.repos.getReadme({
     ref: pod.source.tag,
     repo: repo.name,
     owner: repo.owner,
-    headers
+    headers,
   } as any)
 
   return (READMEResponse && READMEResponse.data) || null
 }
 
-export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
+export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   if (pod.changelog) {
     return await fetch(pod.changelog)
   } else if (!repo) {
@@ -35,7 +35,7 @@ export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHub
   }
 
   const headers = {
-    accept: "application/vnd.github.VERSION.html"
+    accept: "application/vnd.github.VERSION.html",
   }
 
   try {
@@ -44,7 +44,7 @@ export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHub
       repo: repo.name,
       owner: repo.owner,
       path: "CHANGELOG.md",
-      headers
+      headers,
     } as any)
     return READMEResponse.data
   } catch (error) {
@@ -52,7 +52,7 @@ export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHub
   }
 }
 
-export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
+export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   const README = await grabREADME(pod, api, repo)
   if (!README) {
     return null
@@ -70,7 +70,7 @@ export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubD
   }
 }
 
-export const uploadCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
+export const uploadCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   const CHANGELOG = await grabCHANGELOG(pod, api, repo)
   if (!CHANGELOG) {
     return null
