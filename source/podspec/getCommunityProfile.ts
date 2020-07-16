@@ -66,5 +66,5 @@ export const grabCommunityProfile = async (pod: PodspecJSON, api: Octokit, repo:
     headers
   } as any)
 
-  return READMEResponse.data as CommunityProfile
+  return (READMEResponse && READMEResponse.data as CommunityProfile) || null
 }

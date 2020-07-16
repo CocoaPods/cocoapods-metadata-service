@@ -1,11 +1,18 @@
 import * as Octokit from "@octokit/rest"
 import * as AWS from "aws-sdk"
+import fetch from "node-fetch"
 
 import { AWS_BUCKET } from "../globals"
 import { GitHubDetailsForPodspec } from "./getGitHubMetadata"
 import { PodspecJSON } from "./types"
 
-export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec) => {
+export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
+  if (pod.readme) {
+    return await fetch(pod.readme)
+  } else if (!repo) {
+    return null
+  }
+
   const headers = {
     accept: "application/vnd.github.VERSION.html"
   }
@@ -17,10 +24,16 @@ export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDet
     headers
   } as any)
 
-  return READMEResponse.data
+  return (READMEResponse && READMEResponse.data) || null
 }
 
-export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec) => {
+export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
+  if (pod.changelog) {
+    return await fetch(pod.changelog)
+  } else if (!repo) {
+    return null
+  }
+
   const headers = {
     accept: "application/vnd.github.VERSION.html"
   }
@@ -39,8 +52,11 @@ export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHub
   }
 }
 
-export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec) => {
+export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
   const README = await grabREADME(pod, api, repo)
+  if (!README) {
+    return null
+  }
 
   // e.g: upload to http://cocoadocs.org/docsets/LlamaKit/0.6.0/README.html
   const s3 = new AWS.S3()
@@ -54,7 +70,7 @@ export const uploadREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubD
   }
 }
 
-export const uploadCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec) => {
+export const uploadCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec?) => {
   const CHANGELOG = await grabCHANGELOG(pod, api, repo)
   if (!CHANGELOG) {
     return null

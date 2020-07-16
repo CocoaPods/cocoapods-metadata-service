@@ -38,27 +38,30 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
   const podspecJSON: PodspecJSON = await podspecResponse.json()
   const ghDetails = getGitHubMetadata(podspecJSON)
 
-  if (!ghDetails) {
+  if (!ghDetails && !podspecJSON.readme) {
     // tslint:disable-next-line:no-console
-    console.error(`[${webhookJSON.pod} - ${webhookJSON.version}] is not a GitHub project, skipping.`)
+    console.error(`[${webhookJSON.pod} - ${webhookJSON.version}] is not a GitHub project and has no README, skipping.`)
     return
   }
 
   const api = createGHAPI()
   const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
   const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
-  const communityProfile = await grabCommunityProfile(podspecJSON, api, ghDetails)
+  const communityProfile = (ghDetails && await grabCommunityProfile(podspecJSON, api, ghDetails)) || null
 
   if (newREADMEURL) {
     const row: CocoaDocsRow = {
       name: webhookJSON.pod,
       rendered_readme_url: newREADMEURL,
-      license_canonical_url: (communityProfile.files.license && communityProfile.files.license.url) || ghDetails.href,
-      license_short_name: (communityProfile.files.license && communityProfile.files.license.spdx_id) || "Unknown"
     }
 
     if (newCHANGELOG) {
       row.rendered_changelog_url = newCHANGELOG
+    }
+
+    if (communityProfile) {
+      row.license_short_name = (communityProfile.files.license && communityProfile.files.license.spdx_id) || "Unknown"
+      row.license_canonical_url = (communityProfile.files.license && communityProfile.files.license.url) || ghDetails.href
     }
 
     await updateCocoaDocsRowForPod(row)
