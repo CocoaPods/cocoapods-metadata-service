@@ -7,6 +7,8 @@ export interface PodspecJSON {
   homepage: string
   license: License
   summary: string
+  readme?: string
+  changelog?: string
   source: Source
   requires_arc: boolean
   default_subspecs: string

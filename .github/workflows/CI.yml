@@ -1,0 +1,13 @@
+name: "CI"
+on: [pull_request]
+jobs:
+  build:
+    name: "Builds and Compiles"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+      - run: yarn
+      - run: yarn build
+      - run: yarn test
