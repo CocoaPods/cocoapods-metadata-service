@@ -8,7 +8,8 @@ import { PodspecJSON } from "./types"
 
 export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   if (pod.readme) {
-    return await fetch(pod.readme)
+    const readmeReq = await fetch(pod.readme)
+    return await readmeReq.text()
   } else if (!repo) {
     return null
   }
@@ -29,7 +30,8 @@ export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDet
 
 export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   if (pod.changelog) {
-    return await fetch(pod.changelog)
+    const changlogReq = await fetch(pod.changelog)
+    return await changlogReq.text()
   } else if (!repo) {
     return null
   }
