@@ -8,7 +8,7 @@ import { PodspecJSON } from "./types"
 
 const showdown = require("showdown")
 
-const markdownToHTML = (text: String) => {
+const markdownToHTML = (text: string) => {
   const converter = new showdown.Converter()
   converter.setFlavor("github")
   return converter.makeHtml(text)
