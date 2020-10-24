@@ -78,10 +78,12 @@ describe("grabbing the README with http", () => {
     }
 
     mockFetch.mockClear()
-    mockFetch.mockResolvedValue("Best SDK ever.")
+    mockFetch.mockResolvedValue({
+      text: function() { return "Hypotenuse\n* Turtle" }
+    })
 
     grabREADME(podspec, api as any, repo).then((readme) => {
-      expect(readme).toBe("Best SDK ever.")
+      expect(readme).toBe("<p>Hypotenuse</p>\n<ul>\n<li>Turtle</li>\n</ul>")
       expect(fetch).toBeCalledWith("https://example.com/README1")
       expect(api.repos.getContent).toHaveBeenCalledTimes(0)
     })
@@ -101,10 +103,12 @@ describe("grabbing the CHANGELOG with http", () => {
     }
 
     mockFetch.mockClear()
-    mockFetch.mockResolvedValue("Fixed everything.")
+    mockFetch.mockResolvedValue({
+      text: function() { return "`Fizzing Whizzbee`" }
+    })
 
     grabCHANGELOG(podspec, api as any, repo).then((changelog) => {
-      expect(changelog).toBe("Fixed everything.")
+      expect(changelog).toBe("<p><code>Fizzing Whizzbee</code></p>")
       expect(fetch).toBeCalledWith("https://example.com/CHANGELOG1")
       expect(api.repos.getContent).toHaveBeenCalledTimes(0)
     })
