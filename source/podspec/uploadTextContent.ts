@@ -6,10 +6,18 @@ import { AWS_BUCKET } from "../globals"
 import { GitHubDetailsForPodspec } from "./getGitHubMetadata"
 import { PodspecJSON } from "./types"
 
+const showdown = require("showdown")
+
+const markdownToHTML = (text: String) => {
+  const converter = new showdown.Converter()
+  converter.setFlavor("github")
+  return converter.makeHtml(text)
+}
+
 export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   if (pod.readme) {
     const readmeReq = await fetch(pod.readme)
-    return await readmeReq.text()
+    return markdownToHTML(await readmeReq.text())
   } else if (!repo) {
     return null
   }
@@ -31,7 +39,7 @@ export const grabREADME = async (pod: PodspecJSON, api: Octokit, repo: GitHubDet
 export const grabCHANGELOG = async (pod: PodspecJSON, api: Octokit, repo: GitHubDetailsForPodspec | undefined) => {
   if (pod.changelog) {
     const changlogReq = await fetch(pod.changelog)
-    return await changlogReq.text()
+    return markdownToHTML(await changlogReq.text())
   } else if (!repo) {
     return null
   }
