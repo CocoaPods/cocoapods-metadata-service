@@ -6,9 +6,8 @@ import { setup as setupTrunkConnection } from "./trunk/db"
 validateENV()
 
 const app = createApp()
-setupTrunkConnection().then(() => {
-  app.listen(app.get("port"), () => {
-    // tslint:disable-next-line:no-console
-    console.info(`Started server at http://localhost:${app.get("port")}`)
-  })
+app.listen(app.get("port"), () => {
+  setupTrunkConnection()
+  // tslint:disable-next-line:no-console
+  console.info(`Started server at http://localhost:${app.get("port")}`)
 })
