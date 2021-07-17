@@ -1,7 +1,7 @@
 import { Client } from "pg"
 import { TRUNK_DATABASE_URL } from "../globals"
 
-export const trunk = new Client({ connectionString: TRUNK_DATABASE_URL, ssl: false })
+export const trunk = new Client({ connectionString: TRUNK_DATABASE_URL, ssl: true })
 
 export const setup = async () => {
   await trunk.connect()
