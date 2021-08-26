@@ -14,13 +14,7 @@ trunk.on("error", (err) => {
 
 export const setup = async () => {
   console.log("Connecting to trunk db")
-  await trunk.connect(err => {
-    if (err) {
-      console.error('Trunk connection error', err)
-    } else {
-      console.log('Connected to trunk')
-    }
-  })
+  await trunk.connect()
 
 }
 
@@ -53,7 +47,7 @@ export const updateCocoaDocsRowForPod = async (row: CocoaDocsRow) => {
   const existingRow = await trunk.query(existsQuery, existsValues)
   if (existingRow.rowCount) {
     // Update if it exists
-    const insertQuery = `UPDATE cocoadocs_pod_metrics SET "rendered_readme_url"=$1, "rendered_changelog_url"=$2, "license_short_name"=$3, "license_canonical_url"=$4 "updated_at"=$5 WHERE "id"=$6`
+    const insertQuery = `UPDATE cocoadocs_pod_metrics SET "rendered_readme_url"=$1, "rendered_changelog_url"=$2, "license_short_name"=$3, "license_canonical_url"=$4, "updated_at"=$5 WHERE "id"=$6`
     const insertValues = [
       row.rendered_readme_url,
       row.rendered_changelog_url,
