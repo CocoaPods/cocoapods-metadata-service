@@ -46,32 +46,36 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
   const prefix = `[${podspecJSON.name} - ${podspecJSON.version}]`
   console.log(`${prefix} Getting info on README, CHANGELOG and community metrics.`)
-  const api = createGHAPI()
-  const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
-  const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
-  const communityProfile = (ghDetails && (await grabCommunityProfile(podspecJSON, api, ghDetails))) || null
+  try {
+    const api = createGHAPI()
+    const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
+    const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
+    const communityProfile = (ghDetails && (await grabCommunityProfile(podspecJSON, api, ghDetails))) || null
 
-  if (newREADMEURL) {
-    const row: CocoaDocsRow = {
-      name: webhookJSON.pod,
-      rendered_readme_url: newREADMEURL,
+    if (newREADMEURL) {
+      const row: CocoaDocsRow = {
+        name: webhookJSON.pod,
+        rendered_readme_url: newREADMEURL,
+      }
+
+      if (newCHANGELOG) {
+        row.rendered_changelog_url = newCHANGELOG
+      }
+
+      if (communityProfile) {
+        row.license_short_name = (communityProfile.files.license && communityProfile.files.license.spdx_id) || "Unknown"
+        row.license_canonical_url =
+          (communityProfile.files.license && communityProfile.files.license.url) || (ghDetails && ghDetails.href)
+      }
+
+      await updateCocoaDocsRowForPod(row)
+
+      const has = (x: any) => x ? "✔" : "✗"
+      console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
+    } else {
+      console.log(`${" ".repeat(prefix.length)} - Skipped due to no README`)
     }
-
-    if (newCHANGELOG) {
-      row.rendered_changelog_url = newCHANGELOG
-    }
-
-    if (communityProfile) {
-      row.license_short_name = (communityProfile.files.license && communityProfile.files.license.spdx_id) || "Unknown"
-      row.license_canonical_url =
-        (communityProfile.files.license && communityProfile.files.license.url) || (ghDetails && ghDetails.href)
-    }
-
-    await updateCocoaDocsRowForPod(row)
-
-    const has = (x: any) => x ? "✔" : "✗"
-    console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
-  } else {
-    console.log(`${" ".repeat(prefix.length)} - Skipped due to no README`)
+  } catch (error) {
+    console.error(`Uncaught error: ${error}`)
   }
 }
