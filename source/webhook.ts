@@ -44,6 +44,8 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
     return
   }
 
+  const prefix = `[${podspecJSON.name} - ${podspecJSON.version}]`
+  console.log(`${prefix} Getting info on README, CHANGELOG and community metrics.`)
   const api = createGHAPI()
   const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
   const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
@@ -66,7 +68,10 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
     }
 
     await updateCocoaDocsRowForPod(row)
-    // tslint:disable-next-line:no-console
-    console.log(`Updated ${podspecJSON.name} - ${podspecJSON.version}`)
+
+    const has = (x: any) => x ? "✔" : "✗"
+    console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
+  } else {
+    console.log(`${" ".repeat(prefix.length)} - Skipped due to no README`)
   }
 }
