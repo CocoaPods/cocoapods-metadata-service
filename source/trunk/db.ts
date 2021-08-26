@@ -1,7 +1,12 @@
 import { Client } from "pg"
 import { TRUNK_DATABASE_URL } from "../globals"
 
-export const trunk = new Client({ connectionString: TRUNK_DATABASE_URL, ssl: true })
+export const trunk = new Client({
+  connectionString: TRUNK_DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+})
 
 trunk.on("error", (err) => {
   console.error(`Got a db error: ${err}`)
