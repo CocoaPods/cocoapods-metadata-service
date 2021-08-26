@@ -54,9 +54,6 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
     const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
     const communityProfile = (ghDetails && (await grabCommunityProfile(podspecJSON, api, ghDetails))) || null
 
-    const has = (x: any) => x ? "✔" : "✗"
-    console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
-
     if (newREADMEURL) {
       const row: CocoaDocsRow = {
         name: webhookJSON.pod,
@@ -75,6 +72,7 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
       await updateCocoaDocsRowForPod(row)
 
+      const has = (x: any) => x ? "✔" : "✗"
       console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
     } else {
       console.log(`${" ".repeat(prefix.length)} - Skipped due to no README`)
