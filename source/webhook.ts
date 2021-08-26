@@ -1,5 +1,6 @@
 import * as express from "express"
 import fetch from "node-fetch"
+import { stdout } from "process"
 import { createGHAPI } from "./podspec/api"
 import { grabCommunityProfile } from "./podspec/getCommunityProfile"
 import { getGitHubMetadata } from "./podspec/getGitHubMetadata"
@@ -46,11 +47,16 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
   const prefix = `[${podspecJSON.name} - ${podspecJSON.version}]`
   console.log(`${prefix} Getting info on README, CHANGELOG and community metrics.`)
+
   try {
     const api = createGHAPI()
+    stdout.write(".")
     const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
+    stdout.write(".")
     const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
+    stdout.write(".")
     const communityProfile = (ghDetails && (await grabCommunityProfile(podspecJSON, api, ghDetails))) || null
+    stdout.write(".")
 
     if (newREADMEURL) {
       const row: CocoaDocsRow = {
