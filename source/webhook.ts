@@ -50,13 +50,12 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
   try {
     const api = createGHAPI()
-    stdout.write(".")
     const newREADMEURL = await uploadREADME(podspecJSON, api, ghDetails)
-    stdout.write(".")
     const newCHANGELOG = await uploadCHANGELOG(podspecJSON, api, ghDetails)
-    stdout.write(".")
     const communityProfile = (ghDetails && (await grabCommunityProfile(podspecJSON, api, ghDetails))) || null
-    stdout.write(".")
+
+    const has = (x: any) => x ? "✔" : "✗"
+    console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
 
     if (newREADMEURL) {
       const row: CocoaDocsRow = {
@@ -76,7 +75,6 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
 
       await updateCocoaDocsRowForPod(row)
 
-      const has = (x: any) => x ? "✔" : "✗"
       console.log(`${" ".repeat(prefix.length)} Updated: ${has(newREADMEURL)} README, ${has(newCHANGELOG)} CHANGELOG & ${has(communityProfile)} Profile.`)
     } else {
       console.log(`${" ".repeat(prefix.length)} - Skipped due to no README`)

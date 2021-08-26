@@ -7,9 +7,15 @@ trunk.on("error", (err) => {
   console.error(`Got a db error: ${err}`)
 })
 
-
 export const setup = async () => {
-  await trunk.connect()
+  await trunk.connect(err => {
+    if (err) {
+      console.error('Trunk connection error', err)
+    } else {
+      console.log('Connected to trunk')
+    }
+  })
+
 }
 
 export interface CocoaDocsRow {
