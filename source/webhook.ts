@@ -46,7 +46,7 @@ export const trunkWebhook = async (req: express.Request, res: express.Response, 
   }
 
   const prefix = `[${podspecJSON.name} - ${podspecJSON.version}]`
-  console.log(`${prefix} Getting info on README, CHANGELOG and community metrics.`)
+  stdout.write(`${prefix} Getting info on README, CHANGELOG and community metrics.`)
 
   try {
     const api = createGHAPI()
