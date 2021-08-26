@@ -8,6 +8,7 @@ trunk.on("error", (err) => {
 })
 
 export const setup = async () => {
+  console.log("Connecting to trunk db")
   await trunk.connect(err => {
     if (err) {
       console.error('Trunk connection error', err)
